@@ -1,6 +1,7 @@
 package co.edu.unab.johanlatorre.storeapp
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +41,8 @@ fun LoginScreen() {
                 .fillMaxSize()
                 .fillMaxSize()
                 .padding(horizontal = 30.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Image(
                 imageVector = Icons.Default.Person,
@@ -55,7 +58,6 @@ fun LoginScreen() {
                 fontWeight = FontWeight.Bold
 
             )
-
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
@@ -95,6 +97,13 @@ fun LoginScreen() {
                 )
             ) {
                 Text("Iniciar Sesión")
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            TextButton(onClick = {}) {
+                Text(
+                    "¿No tienes cuenta? Registrate.",
+                    color = Color(0xFFFF9900)
+                )
             }
         }
     }
