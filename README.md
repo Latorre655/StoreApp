@@ -1,7 +1,7 @@
 # My kotlin Jetpack Compose Project - StoreApp
 
 <div align = "center">
-  <img src="./img/1000287369.jpg.JPG" width="200" height="200" />
+  <img src="./img/1000287369.jpg.JPG" width="200" height="200"/>
 </div>
 
 ## Información del estudiante
