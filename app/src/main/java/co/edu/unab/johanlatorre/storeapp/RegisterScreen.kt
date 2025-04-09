@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 
 @Preview
 @Composable
-fun Register(){
+fun RegisterScreen(){
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
