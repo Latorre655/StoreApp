@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "439541029478",
+    "project_id": "storeapp-27a88",
+    "storage_bucket": "storeapp-27a88.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:439541029478:android:9bc68d10290db129cfeba7",
+        "android_client_info": {
+          "package_name": "co.edu.unab.johanlatorre.storeapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjutLPHPv0JdgWKlRrMujIpX8PnwjIwuQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
