@@ -32,10 +32,18 @@ class MainActivity : ComponentActivity() {
                     startDestination = myStartDestination,
                 ) {
                     composable("login") {
-                        LoginScreen(myNavController)
+                        LoginScreen(onClickRegister = {
+                            myNavController.navigate("register")
+                        }, onSuccessfulLogin = {
+                            myNavController.navigate("home"){
+                                popUpTo("login"){inclusive = true}
+                            }
+                        })
                     }
                     composable("register") {
-                        RegisterScreen(myNavController)
+                        RegisterScreen(onClickBack = {
+                            myNavController.popBackStack()
+                        })
                     }
                     composable("home") {
                         HomeScreen()

@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -39,26 +42,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.auth
 
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(onClickRegister : ()-> Unit = {}, onClickLogin: () -> Unit = {}, onSuccessfulLogin : ()-> Unit = {}) {
 
 
     //estados
     var inputEmail by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
+    var loginError by remember { mutableStateOf("") }
 
     val activity = LocalView.current.context as Activity
+    val auth = Firebase.auth
 
-    Scaffold { innerPadding ->
+    Scaffold { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(paddingValues)
                 .fillMaxSize()
-                .fillMaxSize()
-                .padding(horizontal = 30.dp),
+                .imePadding()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -72,7 +81,7 @@ fun LoginScreen(navController: NavController) {
             Text(
                 text = "Iniciar Sesion",
                 color = Color(0xFFFF9900),
-                fontSize = 26.sp,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
 
             )
@@ -106,20 +115,33 @@ fun LoginScreen(navController: NavController) {
                 singleLine = true
             )
             Spacer(modifier = Modifier.height(24.dp))
+
+            if (loginError.isNotEmpty()){
+                Text(
+                    loginError,
+                    color = Color.Red,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                )
+            }
+
             Button(
                 onClick = {
 
+                    val isValidEmail:Boolean = validateEmail(inputEmail).first
 
-                    val auth = Firebase.auth
+                    if(isValidEmail){
+
+                    }
                     auth.signInWithEmailAndPassword(inputEmail, inputPassword)
                         .addOnCompleteListener(activity) { task ->
                             if (task.isSuccessful){
-                                navController.navigate("home")
+                                onSuccessfulLogin()
                             }else{
-                                Toast.makeText(activity.applicationContext,
-                                    "Error en credenciales",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                loginError = when(task.exception){
+                                    is FirebaseAuthInvalidCredentialsException -> "Correo o contraseña incorrecta"
+                                    is FirebaseAuthInvalidUserException -> "No existe una cuenta con este correo"
+                                    else -> "Error al iniciar sesión. Intenta denuevo"
+                                }
 
                             }
 
@@ -139,9 +161,7 @@ fun LoginScreen(navController: NavController) {
                 Text("Iniciar Sesión")
             }
             Spacer(modifier = Modifier.height(24.dp))
-            TextButton(onClick = {
-                navController.navigate("register")
-            }) {
+            TextButton(onClick = onClickRegister) {
                 Text(
                     "¿No tienes cuenta? Registrate.",
                     color = Color(0xFFFF9900)

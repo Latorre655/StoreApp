@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -38,17 +39,17 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(myNavController: NavController){
+fun RegisterScreen(onClickBack : ()-> Unit = {}){
     Scaffold(
         topBar = {                    //Boton para regresar
             TopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(onClick = {
-                        myNavController.popBackStack()    //Truco del libro .navigation("login"), para que acumule hojas
-                    }) {
-                        Icon(Icons.Default.ArrowBack,
-                            contentDescription = null)
+                    IconButton(onClick = onClickBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "icon register"
+                        )
                     }
                 }
             )
