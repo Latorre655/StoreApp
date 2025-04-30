@@ -57,6 +57,7 @@ fun HomeScreen() {
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
+
                 },
                 navigationIcon = {
                     IconButton(onClick = { /* do something */ }) {

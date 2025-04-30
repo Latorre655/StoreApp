@@ -13,6 +13,7 @@ fun validateEmail(email: String): Pair<Boolean, String>{
     }
 }
 
+
 fun validatePassword(password: String): Pair<Boolean, String> {
     return when {
         password.isEmpty() -> Pair(false, "La contraseña es requerida")

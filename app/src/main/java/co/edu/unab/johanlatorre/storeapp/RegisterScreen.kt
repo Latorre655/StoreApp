@@ -39,6 +39,7 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun RegisterScreen(onClickBack : ()-> Unit = {}){
     Scaffold(
         topBar = {                    //Boton para regresar
