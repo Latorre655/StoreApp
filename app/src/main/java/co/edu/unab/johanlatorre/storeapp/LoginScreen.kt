@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -37,6 +38,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,13 +53,17 @@ import com.google.firebase.auth.auth
 
 
 @Composable
-fun LoginScreen(onClickRegister : ()-> Unit = {}, onClickLogin: () -> Unit = {}, onSuccessfulLogin : ()-> Unit = {}) {
-
+fun LoginScreen(
+    onClickRegister: () -> Unit = {},
+    onSuccessfulLogin: () -> Unit = {}
+) {
 
     //estados
     var inputEmail by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") }
 
     val activity = LocalView.current.context as Activity
     val auth = Firebase.auth
@@ -91,6 +99,19 @@ fun LoginScreen(onClickRegister : ()-> Unit = {}, onClickLogin: () -> Unit = {},
                 value = inputEmail,
                 onValueChange = { inputEmail = it },
                 modifier = Modifier.fillMaxWidth(),
+                supportingText = {
+                    if (emailError.isNotEmpty()){
+                        Text(
+                            text = emailError,
+                            color = Color.Red
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrect = false,
+                    keyboardType = KeyboardType.Email,
+                ),
                 leadingIcon = {
                     Icon(Icons.Default.Email, contentDescription = null)
                 },
@@ -105,9 +126,23 @@ fun LoginScreen(onClickRegister : ()-> Unit = {}, onClickLogin: () -> Unit = {},
                 value = inputPassword,
                 onValueChange = { inputPassword = it },
                 modifier = Modifier.fillMaxWidth(),
+                supportingText = {
+                    if (passwordError.isNotEmpty()){
+                        Text(
+                            text = passwordError,
+                            color = Color.Red
+                        )
+                    }
+                },
+                visualTransformation = PasswordVisualTransformation(),
                 leadingIcon = {
                     Icon(Icons.Default.Lock, contentDescription = null)
                 },
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrect = false,
+                    keyboardType = KeyboardType.Password,
+                ),
                 label = {
                     Text("Contraseña")
                 },
@@ -116,37 +151,43 @@ fun LoginScreen(onClickRegister : ()-> Unit = {}, onClickLogin: () -> Unit = {},
             )
             Spacer(modifier = Modifier.height(24.dp))
 
-            if (loginError.isNotEmpty()){
+            if (loginError.isNotEmpty()) {
                 Text(
                     loginError,
                     color = Color.Red,
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
                 )
             }
 
             Button(
                 onClick = {
 
-                    val isValidEmail:Boolean = validateEmail(inputEmail).first
+                    val isvalidEmail = validateEmail(inputEmail).first
+                    val isvalidPassword = validatePassword(inputPassword).first
+                    emailError = validateEmail(inputEmail).second
+                    passwordError = validatePassword(inputPassword).second
 
-                    if(isValidEmail){
+                    if (isvalidEmail && isvalidPassword) {
+                        auth.signInWithEmailAndPassword(inputEmail, inputPassword)
+                            .addOnCompleteListener(activity) { task ->
+                                if (task.isSuccessful) {
+                                    onSuccessfulLogin()
+                                } else {
+                                    loginError = when (task.exception) {
+                                        is FirebaseAuthInvalidCredentialsException -> "Correo o contraseña incorrecta"
+                                        is FirebaseAuthInvalidUserException -> "No existe una cuenta con este correo"
+                                        else -> "Error al iniciar sesión. Intenta denuevo"
+                                    }
 
-                    }
-                    auth.signInWithEmailAndPassword(inputEmail, inputPassword)
-                        .addOnCompleteListener(activity) { task ->
-                            if (task.isSuccessful){
-                                onSuccessfulLogin()
-                            }else{
-                                loginError = when(task.exception){
-                                    is FirebaseAuthInvalidCredentialsException -> "Correo o contraseña incorrecta"
-                                    is FirebaseAuthInvalidUserException -> "No existe una cuenta con este correo"
-                                    else -> "Error al iniciar sesión. Intenta denuevo"
                                 }
 
                             }
 
-                        }
-
+                    }else{
+                        loginError
+                    }
 
 
                 },
